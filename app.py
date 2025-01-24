@@ -147,15 +147,10 @@ application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_to_
 
 # Webhook route
 @app.route("/webhook", methods=["POST"])
-async def webhook():
-    update = Update.de_json(await request.json, application.bot)
-    await application.process_update(update)
+def webhook():
+    update = Update.de_json(request.get_json(), application.bot)
+    asyncio.run(application.process_update(update))
     return "ok"
-
-# Start the bot with webhook
-async def set_webhook():
-    webhook_url = os.getenv("WEBHOOK_URL")  # Set this in Render environment variables
-    await application.bot.set_webhook(webhook_url)
 
 # Run the Flask app
 if __name__ == "__main__":
