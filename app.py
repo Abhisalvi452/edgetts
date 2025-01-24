@@ -14,6 +14,9 @@ BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 # Global variables to store user preferences
 user_preferences = {}
 
+# Initialize the bot application
+application = Application.builder().token(BOT_TOKEN).build()
+
 # Command: /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
@@ -137,9 +140,6 @@ async def text_to_speech(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Clean up the file
     os.remove(output_file)
 
-# Initialize the bot application
-application = Application.builder().token(BOT_TOKEN).build()
-
 # Add handlers
 application.add_handler(CommandHandler("start", start))
 application.add_handler(CallbackQueryHandler(button_handler))
@@ -159,4 +159,5 @@ async def set_webhook():
 
 # Run the Flask app
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    port = int(os.getenv("PORT", 10000))  # Use Render's PORT or default to 10000
+    app.run(host="0.0.0.0", port=port)
