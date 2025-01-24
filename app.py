@@ -4,10 +4,9 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
 from edge_tts import Communicate, list_voices
 from flask import Flask, request
+import asyncio
 
-# Initialize Flask app
 app = Flask(__name__)
-
 # Replace with your bot token (use environment variable)
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
