@@ -1,12 +1,13 @@
 import os
 import asyncio
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
 from edge_tts import Communicate, list_voices
 from flask import Flask, request
-import asyncio
 
+# Initialize Flask app
 app = Flask(__name__)
+
 # Replace with your bot token (use environment variable)
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
@@ -15,6 +16,10 @@ user_preferences = {}
 
 # Initialize the bot application
 application = Application.builder().token(BOT_TOKEN).build()
+
+# Initialize the application (add this line)
+async def initialize_app():
+    await application.initialize()
 
 # Command: /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -151,7 +156,8 @@ def webhook():
     asyncio.run(application.process_update(update))
     return "ok"
 
-# Run the Flask app
+# Initialize the application before starting the Flask app
 if __name__ == "__main__":
+    asyncio.run(initialize_app())  # Initialize the application
     port = int(os.getenv("PORT", 10000))  # Use Render's PORT or default to 10000
     app.run(host="0.0.0.0", port=port)
