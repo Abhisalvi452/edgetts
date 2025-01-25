@@ -17,9 +17,14 @@ user_preferences = {}
 # Initialize the bot application
 application = Application.builder().token(BOT_TOKEN).build()
 
-# Initialize the application (add this line)
+# Initialize the application
 async def initialize_app():
     await application.initialize()
+
+# Ensure the app is initialized before the first request
+@app.before_first_request
+async def before_first_request():
+    await initialize_app()
 
 # Command: /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -151,13 +156,12 @@ application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_to_
 
 # Webhook route
 @app.route("/webhook", methods=["POST"])
-def webhook():
+async def webhook():
     update = Update.de_json(request.get_json(), application.bot)
-    asyncio.run(application.process_update(update))
+    await application.process_update(update)
     return "ok"
 
-# Initialize the application before starting the Flask app
+# Run the Flask app
 if __name__ == "__main__":
-    asyncio.run(initialize_app())  # Initialize the application
     port = int(os.getenv("PORT", 10000))  # Use Render's PORT or default to 10000
     app.run(host="0.0.0.0", port=port)
